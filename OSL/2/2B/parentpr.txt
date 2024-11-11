@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+#define SIZE 10
+
+void sort(int arr[], int n);
+void print_array(int arr[], int n);
+
+int main() {
+    int arr[SIZE];
+    int n;
+    pid_t pid;
+    char *argv[SIZE + 2];  // +2 for program name and NULL terminator
+
+    printf("Enter the number of integers (max %d): ", SIZE);
+    scanf("%d", &n);
+
+    if (n > SIZE) {
+        fprintf(stderr, "Number of integers exceeds maximum size %d.\n", SIZE);
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Enter %d integers:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Sort the array
+    sort(arr, n);
+
+    // Create the argument list for execve
+    argv[0] = "child_program";
+    for (int i = 0; i < n; i++) {
+        argv[i + 1] = (char *)malloc(10); // Allocate space for each argument
+        snprintf(argv[i + 1], 10, "%d", arr[i]);
+    }
+    argv[n + 1] = NULL; // NULL-terminate the array
+
+    // Fork a child process
+    pid = fork();
+    if (pid < 0) {
+        perror("fork failed");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid == 0) {
+        // Child process
+        execve("./child_program", argv, NULL);
+        perror("execve failed");
+        exit(EXIT_FAILURE);
+    } else {
+        // Parent process
+        // Free allocated memory
+        for (int i = 0; i < n; i++) {
+            free(argv[i + 1]);
+        }
+
+        // Wait for child process to finish
+        wait(NULL);
+        printf("Parent process exiting...\n");
+        exit(EXIT_SUCCESS);
+    }
+}
+
+void sort(int arr[], int n) {
+    // Simple bubble sort
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void print_array(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+

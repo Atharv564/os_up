@@ -1,0 +1,95 @@
+#!/bin/bash
+
+declare -A employees
+
+add_employee() {
+    echo "Enter Employee ID:"
+    read emp_id
+    if [[ -z "${employees[$emp_id]}" ]]; then
+        echo "Enter Name:"
+        read name
+        echo "Enter Position:"
+        read position
+        echo "Enter Salary:"
+        read salary
+        employees[$emp_id]="$name|$position|$salary"
+        echo "Employee added successfully."
+    else
+        echo "Employee ID already exists."
+    fi
+}
+
+delete_employee() {
+    echo "Enter Employee ID to delete:"
+    read emp_id
+    if [[ -n "${employees[$emp_id]}" ]]; then
+        unset employees[$emp_id]
+        echo "Employee deleted successfully."
+    else
+        echo "Employee ID not found."
+    fi
+}
+
+update_employee() {
+    echo "Enter Employee ID to update:"
+    read emp_id
+    if [[ -n "${employees[$emp_id]}" ]]; then
+        echo "Enter new Name:"
+        read name
+        echo "Enter new Position:"
+        read position
+        echo "Enter new Salary:"
+        read salary
+        employees[$emp_id]="$name|$position|$salary"
+        echo "Employee updated successfully."
+    else
+        echo "Employee ID not found."
+    fi
+}
+
+display_all_employees() {
+    if [[ ${#employees[@]} -eq 0 ]]; then
+        echo "No employees to display."
+    else
+        printf "%-15s %-20s %-20s %-10s\n" "Employee ID" "Name" "Position" "Salary"
+        printf "%-15s %-20s %-20s %-10s\n" "-----------" "----" "--------" "------"
+        for emp_id in "${!employees[@]}"; do
+            IFS='|' read -r name position salary <<< "${employees[$emp_id]}"
+            printf "%-15s %-20s %-20s %-10s\n" "$emp_id" "$name" "$position" "$salary"
+        done
+    fi
+}
+
+search_employee() {
+    echo "Enter Employee ID to search:"
+    read emp_id
+    if [[ -n "${employees[$emp_id]}" ]]; then
+        IFS='|' read -r name position salary <<< "${employees[$emp_id]}"
+        printf "%-15s %-20s %-20s %-10s\n" "Employee ID" "Name" "Position" "Salary"
+        printf "%-15s %-20s %-20s %-10s\n" "-----------" "----" "--------" "------"
+        printf "%-15s %-20s %-20s %-10s\n" "$emp_id" "$name" "$position" "$salary"
+    else
+        echo "Employee ID not found."
+    fi
+}
+
+while true; do
+    echo "1. Add Employee"
+    echo "2. Delete Employee"
+    echo "3. Update Employee"
+    echo "4. Display All Employees"
+    echo "5. Search Employee"
+    echo "6. Exit"
+    echo "Enter your choice:"
+    read choice
+
+    case $choice in
+        1) add_employee ;;
+        2) delete_employee ;;
+        3) update_employee ;;
+        4) display_all_employees ;;
+        5) search_employee ;;
+        6) break ;;
+        *) echo "Invalid choice, please try again." ;;
+    esac
+done

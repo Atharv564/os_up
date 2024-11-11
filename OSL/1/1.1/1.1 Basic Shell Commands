@@ -1,0 +1,63 @@
+echo "OS Students"
+
+ls
+
+read name
+Student
+
+echo "Hello, $name!"
+
+touch newdemo.txt
+
+vim newdemo.txt
+hey all myself student
+the student of SITS
+here to perform pratical
+these student are the future
+bye!!!
+
+vim olddemo.txt
+This is from old file
+hope all the student will understand it
+Ubuntu student
+
+cat newdemo.txt
+
+cat newdemo.txt olddemo.txt
+
+test -f file.txt
+[ -f "newdemo.txt" ] && echo "File exists"
+
+for i in {1..5}; do
+echo "Number $i"
+done
+
+count=1
+while [ $count -le 5 ]; do
+echo "Count is $count"
+((count++))
+done
+
+a=10
+b=5
+((sum = a + b))
+echo $sum    # Output: 15
+
+
+grep "pattern" file.txt
+
+sed 's/student/STUDENT/g' newdemo.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
